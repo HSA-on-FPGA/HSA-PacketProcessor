@@ -1,0 +1,176 @@
+*** gcc-5.3.0/gcc/config/mips/mips.md	2015-03-03 01:07:19.000000000 +0100
+--- gcc-patches/mips.md	2016-01-12 17:39:17.715974693 +0100
+***************
+*** 1437,1443 ****
+    [(set (match_operand:SCALARF 0 "register_operand")
+  	(mult:SCALARF (match_operand:SCALARF 1 "register_operand")
+  		      (match_operand:SCALARF 2 "register_operand")))]
+!   ""
+    "")
+  
+  (define_insn "*mul<mode>3"
+--- 1437,1443 ----
+    [(set (match_operand:SCALARF 0 "register_operand")
+  	(mult:SCALARF (match_operand:SCALARF 1 "register_operand")
+  		      (match_operand:SCALARF 2 "register_operand")))]
+!   "!TARGET_NO_HW_MULT"
+    "")
+  
+  (define_insn "*mul<mode>3"
+***************
+*** 1522,1528 ****
+    [(set (match_operand:GPR 0 "register_operand")
+  	(mult:GPR (match_operand:GPR 1 "register_operand")
+  		  (match_operand:GPR 2 "register_operand")))]
+!   "ISA_HAS_<D>MULT || ISA_HAS_R6<D>MUL"
+  {
+    rtx lo;
+  
+--- 1522,1528 ----
+    [(set (match_operand:GPR 0 "register_operand")
+  	(mult:GPR (match_operand:GPR 1 "register_operand")
+  		  (match_operand:GPR 2 "register_operand")))]
+!   "(ISA_HAS_<D>MULT || ISA_HAS_R6<D>MUL) && !TARGET_NO_HW_MULT"
+  {
+    rtx lo;
+  
+***************
+*** 1604,1610 ****
+    [(set (match_operand:GPR 0 "muldiv_target_operand" "=l")
+  	(mult:GPR (match_operand:GPR 1 "register_operand" "d")
+  		  (match_operand:GPR 2 "register_operand" "d")))]
+!   "ISA_HAS_<D>MULT && !TARGET_FIX_R4000"
+    "<d>mult\t%1,%2"
+    [(set_attr "type" "imul")
+     (set_attr "mode" "<MODE>")])
+--- 1604,1610 ----
+    [(set (match_operand:GPR 0 "muldiv_target_operand" "=l")
+  	(mult:GPR (match_operand:GPR 1 "register_operand" "d")
+  		  (match_operand:GPR 2 "register_operand" "d")))]
+!   "ISA_HAS_<D>MULT && !TARGET_FIX_R4000 && !TARGET_NO_HW_MULT"
+    "<d>mult\t%1,%2"
+    [(set_attr "type" "imul")
+     (set_attr "mode" "<MODE>")])
+***************
+*** 1985,1991 ****
+    [(set (match_operand:DI 0 "register_operand")
+  	(mult:DI (any_extend:DI (match_operand:SI 1 "register_operand"))
+  		 (any_extend:DI (match_operand:SI 2 "register_operand"))))]
+!   "mips_mulsidi3_gen_fn (<CODE>) != NULL"
+  {
+    mulsidi3_gen_fn fn = mips_mulsidi3_gen_fn (<CODE>);
+    emit_insn (fn (operands[0], operands[1], operands[2]));
+--- 1985,1991 ----
+    [(set (match_operand:DI 0 "register_operand")
+  	(mult:DI (any_extend:DI (match_operand:SI 1 "register_operand"))
+  		 (any_extend:DI (match_operand:SI 2 "register_operand"))))]
+!   "mips_mulsidi3_gen_fn (<CODE>) != NULL && !TARGET_NO_HW_MULT"
+  {
+    mulsidi3_gen_fn fn = mips_mulsidi3_gen_fn (<CODE>);
+    emit_insn (fn (operands[0], operands[1], operands[2]));
+***************
+*** 2031,2037 ****
+    [(set (match_operand:DI 0 "muldiv_target_operand" "=ka")
+  	(mult:DI (any_extend:DI (match_operand:SI 1 "register_operand" "d"))
+  		 (any_extend:DI (match_operand:SI 2 "register_operand" "d"))))]
+!   "!TARGET_64BIT && (!TARGET_FIX_R4000 || ISA_HAS_DSP) && ISA_HAS_MULT"
+  {
+    if (ISA_HAS_DSP_MULT)
+      return "mult<u>\t%q0,%1,%2";
+--- 2031,2037 ----
+    [(set (match_operand:DI 0 "muldiv_target_operand" "=ka")
+  	(mult:DI (any_extend:DI (match_operand:SI 1 "register_operand" "d"))
+  		 (any_extend:DI (match_operand:SI 2 "register_operand" "d"))))]
+!   "!TARGET_64BIT && (!TARGET_FIX_R4000 || ISA_HAS_DSP) && ISA_HAS_MULT && !TARGET_NO_HW_MULT"
+  {
+    if (ISA_HAS_DSP_MULT)
+      return "mult<u>\t%q0,%1,%2";
+***************
+*** 2199,2205 ****
+  	  (mult:DI (any_extend:DI (match_operand:SI 1 "register_operand"))
+  		   (any_extend:DI (match_operand:SI 2 "register_operand")))
+  	  (const_int 32))))]
+!   ""
+  {
+    if (ISA_HAS_MULHI)
+      emit_insn (gen_<su>mulsi3_highpart_mulhi_internal (operands[0],
+--- 2199,2205 ----
+  	  (mult:DI (any_extend:DI (match_operand:SI 1 "register_operand"))
+  		   (any_extend:DI (match_operand:SI 2 "register_operand")))
+  	  (const_int 32))))]
+!   "!TARGET_NO_HW_MULT"
+  {
+    if (ISA_HAS_MULHI)
+      emit_insn (gen_<su>mulsi3_highpart_mulhi_internal (operands[0],
+***************
+*** 2237,2245 ****
+  		   (any_extend:DI (match_operand:SI 2 "register_operand" "d")))
+  	  (const_int 32))))
+     (clobber (match_scratch:SI 3 "=l"))]
+!   "ISA_HAS_MULT && !ISA_HAS_MULHI && !TARGET_MIPS16"
+    { return TARGET_FIX_R4000 ? "mult<u>\t%1,%2\n\tmfhi\t%0" : "#"; }
+!   "&& reload_completed && !TARGET_FIX_R4000"
+    [(const_int 0)]
+  {
+    emit_insn (gen_<su>mulsi3_highpart_split (operands[0], operands[1],
+--- 2237,2245 ----
+  		   (any_extend:DI (match_operand:SI 2 "register_operand" "d")))
+  	  (const_int 32))))
+     (clobber (match_scratch:SI 3 "=l"))]
+!   "ISA_HAS_MULT && !ISA_HAS_MULHI && !TARGET_MIPS16 && !TARGET_NO_HW_MULT"
+    { return TARGET_FIX_R4000 ? "mult<u>\t%1,%2\n\tmfhi\t%0" : "#"; }
+!   "&& reload_completed && !TARGET_FIX_R4000 && !TARGET_NO_HW_MULT"
+    [(const_int 0)]
+  {
+    emit_insn (gen_<su>mulsi3_highpart_split (operands[0], operands[1],
+***************
+*** 2722,2728 ****
+        (set (match_operand:GPR 3 "register_operand")
+  	   (mod:GPR (match_dup 1)
+  		    (match_dup 2)))])]
+!   "ISA_HAS_<D>DIV && !TARGET_FIX_VR4120"
+  {
+    if (TARGET_MIPS16)
+      {
+--- 2722,2728 ----
+        (set (match_operand:GPR 3 "register_operand")
+  	   (mod:GPR (match_dup 1)
+  		    (match_dup 2)))])]
+!   "ISA_HAS_<D>DIV && !TARGET_FIX_VR4120 && !TARGET_NO_HW_DIV"
+  {
+    if (TARGET_MIPS16)
+      {
+***************
+*** 2740,2746 ****
+     (set (match_operand:GPR 3 "register_operand" "=d")
+  	(mod:GPR (match_dup 1)
+  		 (match_dup 2)))]
+!   "ISA_HAS_<D>DIV && !TARGET_FIX_VR4120 && !TARGET_MIPS16"
+    "#"
+    "&& reload_completed"
+    [(const_int 0)]
+--- 2740,2746 ----
+     (set (match_operand:GPR 3 "register_operand" "=d")
+  	(mod:GPR (match_dup 1)
+  		 (match_dup 2)))]
+!   "ISA_HAS_<D>DIV && !TARGET_FIX_VR4120 && !TARGET_MIPS16 && !TARGET_NO_HW_DIV"
+    "#"
+    "&& reload_completed"
+    [(const_int 0)]
+***************
+*** 2787,2793 ****
+        (set (match_operand:GPR 3 "register_operand")
+  	   (umod:GPR (match_dup 1)
+  		     (match_dup 2)))])]
+!   "ISA_HAS_<D>DIV && !TARGET_FIX_VR4120"
+  {
+    if (TARGET_MIPS16)
+      {
+--- 2787,2793 ----
+        (set (match_operand:GPR 3 "register_operand")
+  	   (umod:GPR (match_dup 1)
+  		     (match_dup 2)))])]
+!   "ISA_HAS_<D>DIV && !TARGET_FIX_VR4120 && !TARGET_NO_HW_DIV"
+  {
+    if (TARGET_MIPS16)
+      {

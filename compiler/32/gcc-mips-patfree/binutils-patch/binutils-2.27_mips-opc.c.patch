@@ -1,0 +1,64 @@
+--- binutils-2.27/opcodes/mips-opc.c	2016-08-03 09:36:54.000000000 +0200
++++ binutils-2.27_patched/opcodes/mips-opc.c	2017-02-08 16:02:58.067008011 +0100
+@@ -171,6 +171,7 @@
+     case 'E': REG (5, 16, COPRO);
+     case 'G': REG (5, 11, COPRO);
+     case 'H': UINT (3, 0);
++    case '?': UINT (5, 0);
+     case 'J': HINT (19, 6);
+     case 'K': REG (5, 11, HW);
+     case 'M': REG (3, 8, CCC);
+@@ -1155,7 +1156,7 @@
+ {"ei",			"t",		0x41606020, 0xffe0ffff,	WR_1|WR_C0,		0,		I33,		0,	0 },
+ {"emt",			"",		0x41600be1, 0xffffffff, TRAP,			0,		0,		MT32,	0 },
+ {"emt",			"t",		0x41600be1, 0xffe0ffff, WR_1|TRAP,		0,		0,		MT32,	0 },
+-{"eret",		"",		0x42000018, 0xffffffff, NODS,      		0,		I3_32,		0,	0 },
++{"eret",		"",		0x42000018, 0xffffffff, NODS,      		0,		I1,		0,	0 },
+ {"eretnc",		"",		0x42000058, 0xffffffff, NODS,      		0,		I36,		0,	0 },
+ {"evpe",		"",		0x41600021, 0xffffffff, TRAP,			0,		0,		MT32,	0 },
+ {"evpe",		"t",		0x41600021, 0xffe0ffff, WR_1|TRAP,		0,		0,		MT32,	0 },
+@@ -1380,7 +1381,7 @@
+ {"mftlo",		"d,*",		0x41000021, 0xfff307ff, WR_1|RD_a|TRAP,		0,		0,		MT32,	0 },
+ {"mftr",		"d,t,!,H,$",	0x41000000, 0xffe007c8, WR_1|TRAP,		0,		0,		MT32,	0 },
+ {"mfc0",		"t,G",		0x40000000, 0xffe007ff,	WR_1|RD_C0|LC,		0,		I1,		0,	0 },
+-{"mfc0",		"t,G,H",	0x40000000, 0xffe007f8,	WR_1|RD_C0|LC,		0,		I32,		0,	0 },
++{"mfc0",		"t,G,H",	0x40000000, 0xffe007f8,	WR_1|RD_C0|LC,		0,		I1,		0,	0 },
+ {"mfgc0",		"t,G",		0x40600000, 0xffe007ff,	WR_1|RD_C0|LC,		0,		0,		IVIRT,	0 },
+ {"mfgc0",		"t,G,H",	0x40600000, 0xffe007f8, WR_1|RD_C0|LC,		0,		0,		IVIRT,	0 },
+ {"mfhc0",		"t,G",		0x40400000, 0xffe007ff,	WR_1|RD_C0|LC,		0,		I33,		XPA,	0 },
+@@ -1478,7 +1479,7 @@
+ {"mtpc",		"t,P",		0x4080c801, 0xffe0ffc1,	RD_1|WR_C0|CM,		0,		M1|N5|EE,	0,	0 },
+ {"mtps",		"t,P",		0x4080c800, 0xffe0ffc1,	RD_1|WR_C0|CM,		0,		M1|N5|EE,	0,	0 },
+ {"mtc0",		"t,G",		0x40800000, 0xffe007ff,	RD_1|WR_C0|WR_CC|CM,	0,		I1,		0,	0 },
+-{"mtc0",		"t,G,H",	0x40800000, 0xffe007f8,	RD_1|WR_C0|WR_CC|CM,	0,		I32,		0,	0 },
++{"mtc0",		"t,G,H",	0x40800000, 0xffe007f8,	RD_1|WR_C0|WR_CC|CM,	0,		I1,		0,	0 },
+ {"mtgc0",		"t,G",		0x40600200, 0xffe007ff,	RD_1|WR_C0|WR_CC|CM,	0,		0,		IVIRT,	0 },
+ {"mtgc0",		"t,G,H",	0x40600200, 0xffe007f8, RD_1|WR_C0|WR_CC|CM,   0,		0,		IVIRT,	0 },
+ {"mthc0",		"t,G",		0x40c00000, 0xffe007ff,	RD_1|WR_C0|WR_CC|CM,	0,		I33,		XPA,	0 },
+@@ -2045,7 +2046,7 @@
+ {"wacl.ob",		"Y,Z",		0x7800003e, 0xffe007ff,	RD_1|RD_2|FP_D,		WR_MACC,	SB1,		MX,	0 },
+ {"wacl.ob",		"S,T",		0x4800003e, 0xffe007ff,	RD_1|RD_2|FP_D,		WR_MACC,	N54,		0,	0 },
+ {"wacl.qh",		"Y,Z",		0x7820003e, 0xffe007ff,	RD_1|RD_2|FP_D,		WR_MACC,	0,		MX,	0 },
+-{"wait",		"",		0x42000020, 0xffffffff, NODS,   		0,		I3_32,		0,	0 },
++{"wait",		"",		0x42000020, 0xffffffff, NODS,   		0,		I1,		0,	0 },
+ {"wait",		"J",		0x42000020, 0xfe00003f, NODS,   		0,		I32|N55,	0,	0 },
+ {"waiti",		"",		0x42000020, 0xffffffff,	NODS,			0,		L1,		0,	0 },
+ {"wrpgpr",		"d,w",		0x41c00000, 0xffe007ff, RD_2,			0,		I33,		0,	0 },
+@@ -2095,13 +2096,13 @@
+ {"dmtc2",		"t,i",		0x48a00000, 0xffe00000,	RD_1|WR_C2|WR_CC|CM,	0,		IOCT,		0,	0 },
+ {"dmtc2",		"t,G",		0x48a00000, 0xffe007ff,	RD_1|WR_C2|WR_CC|CM,	0,		I3,		0,	IOCT|IOCTP|IOCT2|EE },
+ {"dmtc2",		"t,G,H",	0x48a00000, 0xffe007f8,	RD_1|WR_C2|WR_CC|CM,	0,		I64,		0,	IOCT|IOCTP|IOCT2 },
+-{"mfc2",		"t,G",		0x48000000, 0xffe007ff,	WR_1|RD_C2|LC,		0,		I1,		0,	IOCT|IOCTP|IOCT2|EE },
+-{"mfc2",		"t,G,H",	0x48000000, 0xffe007f8,	WR_1|RD_C2|LC,		0,		I32,		0,	IOCT|IOCTP|IOCT2 },
++{"mfc2",		"t,G",		0x48000000, 0xffe007ff,	WR_1|RD_C2|LC,		0,		I1,		0,	0 },
++{"mfc2",		"t,G,?",	0x48000000, 0xffe007e0,	WR_1|RD_C2|LC,		0,		I1,		0,	0 },
+ {"mfhc2",		"t,G",		0x48600000, 0xffe007ff,	WR_1|RD_C2|LC,		0,		I33,		0,	IOCT|IOCTP|IOCT2 },
+ {"mfhc2",		"t,G,H",	0x48600000, 0xffe007f8,	WR_1|RD_C2|LC,		0,		I33,		0,	IOCT|IOCTP|IOCT2 },
+ {"mfhc2",		"t,i",		0x48600000, 0xffe00000,	WR_1|RD_C2|LC,		0,		I33,		0,	IOCT|IOCTP|IOCT2 },
+-{"mtc2",		"t,G",		0x48800000, 0xffe007ff,	RD_1|WR_C2|WR_CC|CM,	0,		I1,		0,	IOCT|IOCTP|IOCT2|EE },
+-{"mtc2",		"t,G,H",	0x48800000, 0xffe007f8,	RD_1|WR_C2|WR_CC|CM,	0,		I32,		0,	IOCT|IOCTP|IOCT2 },
++{"mtc2",		"t,G",		0x48800000, 0xffe007ff,	RD_1|WR_C2|WR_CC|CM,	0,		I1,		0,	0 },
++{"mtc2",		"t,G,?",	0x48800000, 0xffe007e0,	RD_1|WR_C2|WR_CC|CM,	0,		I1,		0,	0 },
+ {"mthc2",		"t,G",		0x48e00000, 0xffe007ff,	RD_1|WR_C2|WR_CC|CM,	0,		I33,		0,	IOCT|IOCTP|IOCT2 },
+ {"mthc2",		"t,G,H",	0x48e00000, 0xffe007f8,	RD_1|WR_C2|WR_CC|CM,	0,		I33,		0,	IOCT|IOCTP|IOCT2 },
+ {"mthc2",		"t,i",		0x48e00000, 0xffe00000,	RD_1|WR_C2|WR_CC|CM,	0,		I33,		0,	IOCT|IOCTP|IOCT2 },

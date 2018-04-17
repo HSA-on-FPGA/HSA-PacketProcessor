@@ -1,0 +1,8 @@
+--- gcc-5.3.0/libgcc/config/mips/t-mips	2014-02-07 08:46:34.000000000 +0100
++++ gcc-patches/t-mips	2016-09-01 13:25:14.924965031 +0200
+@@ -7,3 +7,5 @@
+ softfp_exclude_libgcc2 := n
+ 
+ LIB2ADD_ST += $(srcdir)/config/mips/lib2funcs.c
++
++LIBGCC2_CFLGAS = -mno-unaligned-mem-access -DSMALL_MEMORY -Os -mips3 -mabi=64 -mlong64 -T ../linker.ld -mno-gpopt -mno-branch-likely

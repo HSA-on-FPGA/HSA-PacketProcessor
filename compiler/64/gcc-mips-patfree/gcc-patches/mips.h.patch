@@ -1,0 +1,147 @@
+--- gcc-5.3.0/gcc/config/mips/mips.h	2015-01-20 00:05:41.000000000 +0100
++++ gcc-patches/mips.h	2016-08-31 15:54:09.951296759 +0200
+@@ -888,23 +888,28 @@
+ 				  || TARGET_MAD				\
+ 				  || (mips_isa_rev >= 1			\
+ 				      && mips_isa_rev <= 5))		\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA has a three-operand multiplication instruction.  */
+ #define ISA_HAS_DMUL3		(TARGET_64BIT				\
+ 				 && TARGET_OCTEON			\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA has HI and LO registers.  */
+-#define ISA_HAS_HILO		(mips_isa_rev <= 5)
++#define ISA_HAS_HILO		(mips_isa_rev <= 5 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA supports instructions DMULT and DMULTU. */
+ #define ISA_HAS_DMULT		(TARGET_64BIT				\
+ 				 && !TARGET_MIPS5900			\
+-				 && mips_isa_rev <= 5)
++				 && mips_isa_rev <= 5 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA supports instructions MULT and MULTU.  */
+-#define ISA_HAS_MULT		(mips_isa_rev <= 5)
++#define ISA_HAS_MULT		(mips_isa_rev <= 5 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA supports instructions MUL, MULU, MUH, MUHU.  */
+ #define ISA_HAS_R6MUL		(mips_isa_rev >= 6)
+@@ -915,22 +920,28 @@
+ /* ISA supports instructions DDIV and DDIVU. */
+ #define ISA_HAS_DDIV		(TARGET_64BIT				\
+ 				 && !TARGET_MIPS5900			\
+-				 && mips_isa_rev <= 5)
++				 && mips_isa_rev <= 5 \
++                 && !TARGET_NO_HW_DIV)
+ 
+ /* ISA supports instructions DIV and DIVU.
+    This is always true, but the macro is needed for ISA_HAS_<D>DIV
+    in mips.md.  */
+-#define ISA_HAS_DIV		(mips_isa_rev <= 5)
++#define ISA_HAS_DIV		(mips_isa_rev <= 5 \
++                 && !TARGET_NO_HW_DIV)
+ 
+ #define ISA_HAS_DIV3		((TARGET_LOONGSON_2EF			\
+ 				  || TARGET_LOONGSON_3A)		\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_DIV)
++
+ 
+ /* ISA supports instructions DIV, DIVU, MOD and MODU.  */
+-#define ISA_HAS_R6DIV		(mips_isa_rev >= 6)
++#define ISA_HAS_R6DIV		(mips_isa_rev >= 6 \
++                 && !TARGET_NO_HW_DIV)
+ 
+ /* ISA supports instructions DDIV, DDIVU, DMOD and DMODU.  */
+-#define ISA_HAS_R6DDIV		(TARGET_64BIT && mips_isa_rev >= 6)
++#define ISA_HAS_R6DDIV		(TARGET_64BIT && mips_isa_rev >= 6 \
++                 && !TARGET_NO_HW_DIV)
+ 
+ /* ISA has the floating-point conditional move instructions introduced
+    in mips4.  */
+@@ -1032,7 +1043,9 @@
+ 				      && (MODE) == V2SFmode))		\
+ 				 && !TARGET_MIPS16)
+ 
+-#define ISA_HAS_LWL_LWR		(mips_isa_rev <= 5 && !TARGET_MIPS16)
++#define ISA_HAS_LWL_LWR		(mips_isa_rev <= 5 \
++                && !TARGET_MIPS16 \
++                && !TARGET_NO_UNALIGNED_MEM_ACCESS)
+ 
+ #define ISA_HAS_IEEE_754_LEGACY	(mips_isa_rev <= 5)
+ 
+@@ -1046,21 +1059,25 @@
+ #define ISA_HAS_MULHI		((TARGET_MIPS5400			 \
+ 				  || TARGET_MIPS5500			 \
+ 				  || TARGET_SR71K)			 \
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA has three operand multiply instructions that negate the
+    result and put the result in an accumulator.  */
+ #define ISA_HAS_MULS		((TARGET_MIPS5400			\
+ 				  || TARGET_MIPS5500			\
+ 				  || TARGET_SR71K)			\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_MULT)
++
+ 
+ /* ISA has three operand multiply instructions that subtract the
+    result from a 4th operand and put the result in an accumulator.  */
+ #define ISA_HAS_MSAC		((TARGET_MIPS5400			\
+ 				  || TARGET_MIPS5500			\
+ 				  || TARGET_SR71K)			\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA has three operand multiply instructions that add the result
+    to a 4th operand and put the result in an accumulator.  */
+@@ -1069,12 +1086,14 @@
+ 				  || TARGET_MIPS5400			\
+ 				  || TARGET_MIPS5500			\
+ 				  || TARGET_SR71K)			\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA has NEC VR-style MACC, MACCHI, DMACC and DMACCHI instructions.  */
+ #define ISA_HAS_MACCHI		((TARGET_MIPS4120			\
+ 				  || TARGET_MIPS4130)			\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA has the "ror" (rotate right) instructions.  */
+ #define ISA_HAS_ROR		((mips_isa_rev >= 2			\
+@@ -1082,7 +1101,8 @@
+ 				  || TARGET_MIPS5500			\
+ 				  || TARGET_SR71K			\
+ 				  || TARGET_SMARTMIPS)			\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA has the WSBH (word swap bytes within halfwords) instruction.
+    64-bit targets also provide DSBH and DSHD.  */
+@@ -1093,7 +1113,8 @@
+ 				  || TARGET_LOONGSON_2EF		\
+ 				  || TARGET_MIPS5900			\
+ 				  || mips_isa_rev >= 1)			\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16 \
++                 && !TARGET_NO_HW_MULT)
+ 
+ /* ISA has data prefetch, LL and SC with limited 9-bit displacement.  */
+ #define ISA_HAS_9BIT_DISPLACEMENT	(mips_isa_rev >= 6)

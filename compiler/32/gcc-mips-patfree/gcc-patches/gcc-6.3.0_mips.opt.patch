@@ -1,0 +1,21 @@
+--- gcc-6.3.0/gcc/config/mips/mips.opt	2016-01-04 15:30:50.000000000 +0100
++++ gcc-6.3.0_patched/gcc/config/mips/mips.opt	2017-02-07 10:19:19.015564165 +0100
+@@ -427,6 +427,18 @@
+ Target RejectNegative JoinedOrMissing Var(mips_cb) Report Enum(mips_cb_setting) Init(MIPS_CB_OPTIMAL)
+ Specify the compact branch usage policy.
+ 
++mno-unaligned-mem-access
++Target Report Mask(NO_UNALIGNED_MEM_ACCESS)
++Do not use patented lwl/lwr/swl/swr instructions
++
++mnohwdiv
++Target Report Mask(NO_HW_DIV)
++No hardware divu/div instruction support
++
++mnohwmult
++Target Report Mask(NO_HW_MULT)
++No hardware multiplier instruction support
++
+ Enum
+ Name(mips_cb_setting) Type(enum mips_cb_setting)
+ Policies available for use with -mcompact-branches=:

@@ -1,0 +1,20 @@
+*** gcc-5.3.0/gcc/config/mips/mips.opt	2015-01-05 13:33:28.000000000 +0100
+--- gcc-patches/mips.opt	2016-01-12 17:39:25.407858094 +0100
+***************
+*** 418,420 ****
+--- 418,432 ----
+  
+  noasmopt
+  Driver
++ 
++ mno-unaligned-mem-access
++ Target Report Mask(NO_UNALIGNED_MEM_ACCESS)
++ Do not use patented lwl/lwr/swl/swr instructions
++ 
++ mnohwdiv
++ Target Report Mask(NO_HW_DIV)
++ No hardware divu/div instruction support
++ 
++ mnohwmult
++ Target Report Mask(NO_HW_MULT)
++ No hardware multiplier instruction support
