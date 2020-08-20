@@ -26,6 +26,10 @@ else
     PREFIX=`pwd`/$1
 fi
 
+# get gcc
+echo -n "Downloading gcc..."
+wget ftp://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz
+
 # extract all tools
 
 echo "Extracting all tools to the current directory"
@@ -48,7 +52,7 @@ tar xf mpc-1.0.3.tar.gz
 echo " done!"
 
 echo -n "Extracting gcc..."
-tar xf gcc-5.3.0.tar.gz
+tar xf gcc-9.3.0.tar.gz
 echo " done!"
 
 echo -n "Extracting newlib..."
@@ -105,16 +109,17 @@ echo " done!"
 
 # patch gcc
 echo -n "Patching gcc..."
-patch ./gcc-5.3.0/gcc/config/mips/mips.h < ./gcc-patches/mips.h.patch
-patch ./gcc-5.3.0/gcc/config/mips/mips.md < ./gcc-patches/mips.md.patch
-patch ./gcc-5.3.0/gcc/config/mips/mips.opt < ./gcc-patches/mips.opt.patch
+patch ./gcc-9.3.0/gcc/config/mips/mips.h < ./gcc-patches/mips.h.patch
+patch ./gcc-9.3.0/gcc/config/mips/mips.md < ./gcc-patches/mips.md.patch
+patch ./gcc-9.3.0/gcc/config/mips/mips.opt < ./gcc-patches/mips.opt.patch
+patch ./gcc-9.3.0/gcc/opth-gen.awk < ./gcc-patches/opth-gen.awk.patch
 echo " done!"
 
 # build gcc
 echo -n "Building bootstrap gcc..."
 mkdir build-bootstrap-gcc
 cd build-bootstrap-gcc
-../gcc-5.3.0/configure --target=mips64el-elf \
+../gcc-9.3.0/configure --target=mips64el-elf \
     --prefix=$PREFIX \
     --enable-languages=c,c++ \
     --with-mpfr=$PREFIX \
@@ -163,7 +168,7 @@ export SYSROOT_CFLAGS_FOR_TARGET="-mno-unaligned-mem-access -Os -mips3 -mabi=64 
 export CFLAGS_FOR_TARGET="-mno-unaligned-mem-access -Os -mips3 -mabi=64 -mlong64 -T ../linker.ld -mno-gpopt -mno-branch-likely -mnohwdiv -mnohwmult -mno-gpopt"
 mkdir build-gcc
 cd build-gcc
-../gcc-5.3.0/configure --target=mips64el-elf \
+../gcc-9.3.0/configure --target=mips64el-elf \
     --prefix=$PREFIX \
     --enable-languages=c,c++ \
     --with-mpfr=$PREFIX \
