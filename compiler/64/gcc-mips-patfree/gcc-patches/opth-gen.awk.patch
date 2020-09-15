@@ -1,0 +1,11 @@
+--- gcc-9.3.0/gcc/opth-gen.awk	2020-03-12 11:07:21.000000000 +0000
++++ gcc-patches/opth-gen.awk	2020-07-22 11:34:09.327605292 +0000
+@@ -376,7 +376,7 @@
+ 		print "#error too many masks for " var
+ 		print "#endif"
+ 	}
+-	else if (masknum[var] > 32) {
++	else if (masknum[var] > 34) {
+ 		if (var == "")
+ 			print "#error too many target masks"
+ 		else

@@ -26,6 +26,10 @@ else
     PREFIX=`pwd`/$1
 fi
 
+# get gcc
+echo -n "Downloading gcc..."
+wget ftp://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz
+
 # extract all tools
 
 echo "Extracting all tools to the current directory"
@@ -48,7 +52,7 @@ tar xf mpc-1.0.3.tar.gz
 echo " done!"
 
 echo -n "Extracting gcc..."
-tar xf gcc-6.3.0.tar.gz
+tar xf gcc-9.3.0.tar.gz
 echo " done!"
 
 echo -n "Extracting newlib..."
@@ -105,16 +109,17 @@ echo " done!"
 
 # patch gcc
 echo -n "Patching gcc..."
-patch ./gcc-6.3.0/gcc/config/mips/mips.h < ./gcc-patches/gcc-6.3.0_mips.h.patch
-patch ./gcc-6.3.0/gcc/config/mips/mips.md < ./gcc-patches/gcc-6.3.0_mips.md.patch
-patch ./gcc-6.3.0/gcc/config/mips/mips.opt < ./gcc-patches/gcc-6.3.0_mips.opt.patch
+patch ./gcc-9.3.0/gcc/config/mips/mips.h < ./gcc-patches/gcc-9.3.0_mips.h.patch
+patch ./gcc-9.3.0/gcc/config/mips/mips.md < ./gcc-patches/gcc-9.3.0_mips.md.patch
+patch ./gcc-9.3.0/gcc/config/mips/mips.opt < ./gcc-patches/gcc-9.3.0_mips.opt.patch
+patch ./gcc-9.3.0/gcc/opth-gen.awk < ./gcc-patches/gcc-9.3.0_opth-gen.awk.patch
 echo " done!"
 
 # build gcc
 echo -n "Building bootstrap gcc..."
 mkdir build-bootstrap-gcc
 cd build-bootstrap-gcc
-../gcc-6.3.0/configure --target=mipsel-elf \
+../gcc-9.3.0/configure --target=mipsel-elf \
     --prefix=$PREFIX \
     --enable-languages=c,c++ \
     --with-mpfr=$PREFIX \
@@ -161,7 +166,7 @@ echo " done"
 echo -n "Building gcc with newlib support..."
 mkdir build-gcc
 cd build-gcc
-../gcc-6.3.0/configure --target=mipsel-elf \
+../gcc-9.3.0/configure --target=mipsel-elf \
     --prefix=$PREFIX \
     --enable-languages=c,c++ \
     --with-mpfr=$PREFIX \
